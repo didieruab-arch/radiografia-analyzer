@@ -2,6 +2,10 @@
 
 Sistema de análisis de radiografías usando YOLOv11 para detectar anomalías y enfermedades.
 
+## 🚀 Deploy en Render
+
+Este proyecto está preparado para deployarse en Render. Lee [DEPLOYMENT_RENDER.md](DEPLOYMENT_RENDER.md) para instrucciones completas.
+
 ## Requisitos Previos
 
 - Python 3.8 o superior
