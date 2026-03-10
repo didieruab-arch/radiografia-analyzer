@@ -1,0 +1,10 @@
+flask
+flask-cors
+ultralytics
+opencv-python-headless
+numpy
+pillow
+openpyxl
+pandas
+reportlab
+gunicorn

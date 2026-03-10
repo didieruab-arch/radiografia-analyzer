@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabVision - Análisis Inteligente de Radiografías</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-x-ray"></i>
+                <h1>LabVision</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#analisis">Análisis</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Detección Temprana de Problemas de Salud</h2>
+                <p>Análisis avanzado de radiografías mediante inteligencia artificial para identificar anomalías y apoyar el diagnóstico médico.</p>
+                <button class="btn-primary" onclick="scrollToAnalysis()">
+                    <i class="fas fa-upload"></i> Analizar Radiografía
+                </button>
+            </div>
+            <div class="hero-image">
+                <i class="fas fa-lungs"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="statistics">
+        <div class="container">
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <h3>98.5%</h3>
+                <p>Precisión</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <h3>&lt; 30 seg</h3>
+                <p>Tiempo de Análisis</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3>5,000+</h3>
+                <p>Análisis Realizados</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-hospital"></i>
+                <h3>1</h3>
+                <p>UAB</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="analisis" class="upload-section">
+        <div class="container">
+            <h2>Cargar Radiografía para Análisis</h2>
+            <p class="section-subtitle">Sube una imagen de radiografía y obtén un análisis detallado al instante</p>
+            <p class="info-note"><i class="fas fa-info-circle"></i> Solo se mostrarán detecciones con confianza superior al 60%</p>
+            
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Arrastra tu radiografía aquí</h3>
+                    <p>o haz clic para seleccionar un archivo</p>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">
+                        Seleccionar Archivo
+                    </button>
+                </div>
+
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <div class="image-title" id="imageTitle" style="display: none;">
+                        <h3><i class="fas fa-check-circle"></i> Imagen Analizada con Detecciones</h3>
+                        <p>Los recuadros en la imagen muestran las áreas donde se detectaron anomalías</p>
+                    </div>
+                    <div class="image-preview">
+                        <img id="imagePreview" src="" alt="Preview">
+                        <button class="btn-close" onclick="clearImage()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <button class="btn-primary btn-analyze" id="analyzeBtn" onclick="analyzeImage()">
+                        <i class="fas fa-search"></i> Analizar Radiografía
+                    </button>
+                    
+                    <!-- Resumen de detecciones -->
+                    <div class="detections-summary" id="detectionsSummary" style="display: none;">
+                        <h4><i class="fas fa-diagnoses"></i> Enfermedades Detectadas</h4>
+                        <div id="detectionsList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Analizando radiografía...</p>
+            </div>
+
+            <!-- Results -->
+            <div class="results-container" id="resultsContainer" style="display: none;">
+                <h3><i class="fas fa-clipboard-list"></i> Resultados del Análisis</h3>
+                
+                <div class="result-card">
+                    <div class="result-header">
+                        <h4>Estado General</h4>
+                        <span class="status-badge" id="statusBadge">Normal</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="confidenceBar"></div>
+                    </div>
+                    <p class="confidence-text">Confianza: <span id="confidenceValue">0%</span></p>
+                </div>
+
+                <div class="findings-grid">
+                    <div class="finding-card" id="finding1">
+                        <div class="finding-icon normal">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h4>Pulmones</h4>
+                        <p class="finding-status">Sin anomalías detectadas</p>
+                    </div>
+                    <div class="finding-card" id="finding2">
+                        <div class="finding-icon normal">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h4>Corazón</h4>
+                        <p class="finding-status">Tamaño normal</p>
+                    </div>
+                    <div class="finding-card" id="finding3">
+                        <div class="finding-icon normal">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h4>Costillas</h4>
+                        <p class="finding-status">Sin fracturas</p>
+                    </div>
+                    <div class="finding-card" id="finding4">
+                        <div class="finding-icon normal">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h4>Columna</h4>
+                        <p class="finding-status">Alineación correcta</p>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h4><i class="fas fa-lightbulb"></i> Recomendaciones</h4>
+                    <ul id="recommendationsList">
+                        <li>Los resultados del análisis son solo de apoyo y no reemplazan el criterio médico profesional.</li>
+                        <li>Se recomienda consultar con un radiólogo certificado para confirmación diagnóstica.</li>
+                    </ul>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="downloadReport()">
+                        <i class="fas fa-download"></i> Descargar Reporte
+                    </button>
+                    <button class="btn-primary" onclick="resetAnalysis()">
+                        <i class="fas fa-redo"></i> Nuevo Análisis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="servicios" class="services">
+        <div class="container">
+            <h2>Nuestros Servicios</h2>
+            <p class="section-subtitle">Tecnología avanzada para el diagnóstico médico</p>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-lungs"></i>
+                    </div>
+                    <h3>Radiografía de Tórax</h3>
+                    <p>Detección de neumonía, tuberculosis, edema pulmonar y otras patologías respiratorias.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-bone"></i>
+                    </div>
+                    <h3>Radiografía Ósea</h3>
+                    <p>Identificación de fracturas, y fisuras en la estructura ósea del tórax.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Análisis con IA</h3>
+                    <p>Algoritmos de aprendizaje profundo entrenados con millones de imágenes médicas.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Reportes Detallados</h3>
+                    <p>Informes completos con métricas, visualizaciones y recomendaciones clínicas.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Privacidad Garantizada</h3>
+                    <p>Cumplimiento total con HIPAA y protección de datos médicos sensibles.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Soporte 24/7</h3>
+                    <p>Asistencia técnica y consultoría médica disponible en todo momento.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contacto" class="contact">
+        <div class="container">
+            <h2>Contáctanos</h2>
+            <p class="section-subtitle">¿Tienes preguntas? Estamos aquí para ayudarte</p>
+            
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>contacto@labvision.com</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Teléfono</h4>
+                            <p>+34 900 123 456</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Dirección</h4>
+                            <p>Carrer Emprius, 2, 08202 Sabadell, Barcelona, España</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="contact-form" onsubmit="handleSubmit(event)">
+                    <input type="text" placeholder="Nombre completo" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="text" placeholder="Asunto" required>
+                    <textarea placeholder="Mensaje" rows="5" required></textarea>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-x-ray"></i> LabVision</h3>
+                    <p>Innovación en diagnóstico médico mediante inteligencia artificial.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#analisis">Análisis</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Términos y Condiciones</a></li>
+                        <li><a href="#">Política de Privacidad</a></li>
+                        <li><a href="#">Aviso Legal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Síguenos</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 LabVision. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
